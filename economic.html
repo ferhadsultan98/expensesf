@@ -27,7 +27,7 @@
         </form>
       </div>
     </div>
-    <button id="darklightButton"><i class="darkicon" >☾</i><i class="lighticon">☼</i></button>
+    <button id="darklightButton"><i class="darkicon" ><i class="fas fa-moon darkicon"></i></i><i class="lighticon"><i class="fas fa-sun lighticon hidden"></i></i></button>
 
 <div class="flex-Container" id="flex-Container" style="display: none;">
 <!-- Sidebar -->
@@ -38,17 +38,17 @@
       </div>
       <div id="profile-bio">
         <div id="profile-fullname"></div>
+        <hr>
       </div>
-      <hr>
     </div>
   
     <div id="sideTabs">
-      <a href=""><i class="fas fa-home"></i><p class="hiddenTxt">Əsas</p></a>
-      <a href=""><i class="fas fa-money-bill-wave"></i><p class="hiddenTxt">Xərc əlavə et</p></a>
-      <a href=""><i class="fas fa-info-circle"></i><p class="hiddenTxt">Xərc məlumatları</p></a>
-      <a href=""><i class="fas fa-bell"></i><p class="hiddenTxt">Bildirişlər</p></a>
-      <a href=""><i class="fas fa-headset"></i><p class="hiddenTxt">Dəstək</p></a>
-      <a href=""><i class="fas fa-question-circle"></i><p class="hiddenTxt">Haqqımızda</p></a>
+      <a href="#expenseChartHeader" class="tabLink"><i class="fas fa-home"></i><p class="hiddenTxt">Əsas</p></a>
+      <a href="#addMoneySection" class="tabLink"><i class="fas fa-money-bill-wave"></i><p class="hiddenTxt">Xərc əlavə et</p></a>
+      <a href="#moneyInfoSection" class="tabLink"><i class="fas fa-info-circle"></i><p class="hiddenTxt">Xərc məlumatları</p></a>
+      <a href="#notifications" class="tabLink"><i class="fas fa-bell"></i><p class="hiddenTxt">Bildirişlər</p></a>
+      <a href="#support" class="tabLink"><i class="fas fa-headset"></i><p class="hiddenTxt">Dəstək</p></a>
+      <a href="#about" class="tabLink"><i class="fas fa-question-circle"></i><p class="hiddenTxt">Haqqımızda</p></a>
     </div>
       
       <button id="openCloseArrow">
@@ -58,10 +58,14 @@
       <label for="logoutBtn" id="logoutLbl">Çıxış</label>
       <button id="logoutBtn"><i class="fas fa-sign-out"></i></button>
     </div>
+    <p>ExpenseSF 2025</p>
     </div>
 
     <!-- Dashboard Səhifəsi -->
     <div id="dashboard">
+      <h2 id="expenseChartHeader">Xərc Statistikası</h2>
+      <canvas id="expenseChart" class="tabContent">
+      </canvas>
       <!-- Profil Səhifəsi -->
       <div id="profile-page">
         <h2>Profil Məlumatları</h2>
@@ -82,7 +86,7 @@
 
       <!-- Xərc Səhifəsi -->
       <div id="expenses-page">
-        <div id="addMoneySection" class="tabSection">
+        <div id="addMoneySection" class="tabContent">
         <h2>Xərc əlavə et</h2>
         <form id="expenseForm">
           <select id="category" required>
@@ -105,8 +109,20 @@
           </select>
           <button type="submit">Yadda Saxla</button>
         </form>
+        <div class="import-export" id="import-export" class="tabContent">
+          <div class="import-area">
+            <div id="drag-drop-area" class="drag-drop-area">
+              <p id="drop-message">Bura sürükləyin və ya klikləyin.</p>
+              <input type="file" id="fileInput" accept=".xlsx, .xls" />
+            </div>
+            <button id="importBtn" disabled>İdxal Et</button>
+          </div>
+      <div class="export-area">
+        <button id="exportBtn">Excel'ə İxrac Et</button>
       </div>
-      <div id="moneyInfoSection" class="tabSection">
+      </div>
+      </div>
+      <div id="moneyInfoSection" class="tabContent">
         <h3>Xərc Məlumatları</h3>
         <table id="expenseTable">
           <thead>
@@ -133,27 +149,7 @@
           </tbody>
         </table>
       </div>
-      
-        <h3 id="expenseChartHeader">Xərc Statistikası</h3>
-        <canvas id="expenseChart">
-
-        </canvas>
-  
-        <div class="import-export">
-          <div class="import-area">
-            <div id="drag-drop-area" class="drag-drop-area">
-              <p id="drop-message">Bura sürükləyin və ya klikləyin.</p>
-              <input type="file" id="fileInput" accept=".xlsx, .xls" />
-            </div>
-            <button id="importBtn" disabled>İdxal Et</button>
-          </div>
-      <div class="export-area">
-        <button id="exportBtn">Excel'ə İxrac Et</button>
       </div>
-      </div>
-      </div>
-     
-      
     </div>
   </div>
     <script type="module" src="economic.js" defer></script>

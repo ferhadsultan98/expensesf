@@ -480,31 +480,31 @@ if (window.expenseChart instanceof Chart) {
                 y: {
                     beginAtZero: true, // Y oxu sıfırdan başlasın
                     grid: {
-                        borderColor: 'rgba(255, 255, 255, 0.2)', // Y oxunun grid xətti rəngi
+                        borderColor: 'white', // Y oxunun grid xətti rəngi
                         borderWidth: 1,
-                        color: 'rgba(255, 255, 255, 0.1)', // Xəttin rəngi
+                        color: 'white', // Xəttin rəngi
                     },
                     ticks: {
                         font: {
                             size: 14, // Y oxu yazılarının ölçüsü
                             family: 'Arial, sans-serif', // Yazı tipi
                             weight: 'bold', // Yazının qalınlığı
-                            color: '#fff' // Yazı rəngi
+                            color: 'white' // Yazı rəngi
                         }
                     }
                 },
                 x: {
                     grid: {
-                        borderColor: 'rgba(255, 255, 255, 0.2)', // X oxunun grid xətti rəngi
+                        borderColor: 'white', // X oxunun grid xətti rəngi
                         borderWidth: 1,
-                        color: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
                     },
                     ticks: {
                         font: {
                             size: 14, // X oxu yazılarının ölçüsü
                             family: 'Arial, sans-serif',
                             weight: 'bold',
-                            color: '#fff' // Yazı rəngi
+                            color: 'white' // Yazı rəngi
                         }
                     }
                 }
@@ -512,7 +512,7 @@ if (window.expenseChart instanceof Chart) {
             plugins: {
                 tooltip: {
                     backgroundColor: 'rgba(0, 0, 0, 0.7)', // Tooltip fonu
-                    titleColor: '#fff', // Tooltip başlıq rəngi
+                    titleColor: 'white', // Tooltip başlıq rəngi
                     bodyColor: '#fff', // Tooltip bədən rəngi
                     borderColor: 'rgba(255, 255, 255, 0.5)', // Tooltip sərhəd rəngi
                     borderWidth: 1, // Tooltip sərhəd qalınlığı
@@ -533,10 +533,10 @@ if (window.expenseChart instanceof Chart) {
                             const dataValue = tooltipItem.raw;
                             if (dataset === 0) {
                                 // İlk dataset: Toplam Xərc Miqdarı
-                                return 'Toplam Xərc Miqdarı (Qiymət): ' + dataValue + ' AZN';
+                                return ' Toplam Xərc Miqdarı (Qiymət): ' + dataValue + ' AZN';
                             } else if (dataset === 1) {
                                 // İkinci dataset: Xərc Sayı
-                                return 'Xərc Sayı (Neçə Dəfə): ' + dataValue + ' dəfə';
+                                return ' Xərc Sayı (Neçə Dəfə): ' + dataValue + ' dəfə';
                             }
                         }
                     }
@@ -774,7 +774,7 @@ openCloseButton.addEventListener('click', function () {
     if (sideBar.style.height === "20vw") {
       sideBar.style.height = "10vw";
       profilIcon.style.width = "10vw";
-      openCloseButton.style.transform = "rotate(180deg)";
+      openCloseButton.style.transform = "rotate(360deg)";
     }
     else {
       sideBar.style.height = "20vw";
@@ -806,6 +806,12 @@ openCloseButton.addEventListener('click', function () {
   }
 })
 
-
-  
- 
+document.querySelectorAll('.tabLink').forEach(link => {
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
+    const targetId = this.getAttribute('href').substring(1);
+    document.getElementById(targetId).scrollIntoView({
+      behavior: 'smooth'
+    });
+  });
+});
