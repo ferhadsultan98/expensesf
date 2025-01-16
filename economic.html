@@ -4,11 +4,818 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aylıq Xərc Tətbiqi</title>
-    <link rel="stylesheet" href="economic.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  /* Genel ayarlar */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+html{
+  scroll-behavior: smooth;
+}
+/* WebKit scrollbar stilleri */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
 
+::-webkit-scrollbar-track {
+  background-color: #003333;
+  border-radius: 10px;
+}
+body.dark-mode ::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #00b3b3;
+  border-radius: 10px;
+  border: 3px solid #003333;
+}
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background-color: #003333;
+  border: none;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #008080;
+}
+/* Chrome, Safari, Edge için */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#expenseChartHeader {
+  padding-top: 2vh;
+  text-align: center;
+}
+#expenseChart {
+  margin-bottom: 50vh;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  backdrop-filter: blur(6px); /* Maksimum yükseklik sınırı belirleyin */
+  cursor: pointer;
+}
+#addMoneySection {
+  height: 100vh;
+  padding-top: 2vh;
+}
+#moneyInfoSection {
+  padding-top: 2vh;
+  height: 100vh;
+}
+@media screen and (max-width: 768px) {
+  #expenseChart {
+    margin-bottom: 10vh;
+    height: 40vh;
+    max-height: 40vh;
+  }
+  .titleWeb{
+    display: none;
+  }
+  #moneyInfoSection {
+    height: 50vh;
+  }
+  #drag-drop-area{
+    width: 30px;
+    height: 30px;
+  }
+  #drop-message{
+    display: none;
+  }
+}
+/* Sayfa arka planı ve genel stiller */
+body {
+  background-color: #003333;
+  color: #e0f7f7;
+  font-size: 16px;
+  line-height: 1.6;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+/* Side Tabs */
+#sideTabs {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+}
+a {
+  text-decoration: none;
+  color: white;
+  position: relative;
+  font-size: 20px;
+  transition: 0.5s ease;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+a:hover {
+  color: #00b3b3;
+  border-bottom: 1px solid #00b3b3;
+}
+/* Giriş sayfası */
+#login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #004d4d; /* Dark Cyan */
+}
+
+.login-container {
+  background-color: #005757; /* Cyan Green */
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+}
+h2 {
+  color: #e0f7f7;
+  margin-bottom: 20px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #007373;
+  border-radius: 30px;
+  background-color: #003e3e;
+  color: #e0f7f7;
+  font-size: 14px;
+  resize: none;
+}
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #13bdbd;
+}
+
+input[type="password"],
+input[type="text"],
+input[type="number"],
+select {
+  transition: all 0.3s ease;
+}
+
+input[type="password"]:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #00b3b3;
+  outline: none;
+}
+#apply-filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+}
+.pagination-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+}
+button {
+  padding: 12px;
+  background-color: #004d4d;
+  border: none;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 5px;
+}
+
+button:hover {
+  background-color: #009999;
+}
+
+button:active {
+  background-color: #007373;
+}
+#expenseForm{
+  margin-bottom: 10px;
+}
+.import-export {
+  backdrop-filter: blur(6px);
+  border: 2px solid gray;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.import-area,
+.export-area {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.import-export h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.import-export #drag-drop-area {
+  border: 2px dashed #888;
+  padding: 40px;
+  width: 20vw;
+  margin-bottom: 15px;
+  background-color: rgba(255, 255, 255, 0.063);
+  backdrop-filter: blur(5px);
+  transition: all 0.5s ease;
+}
+
+.import-export #drag-drop-area:hover {
+  border-color: #555;
+  background-color: rgba(255, 255, 255, 0.388);
+}
+
+.import-export #drop-message {
+  color: #666;
+  font-size: 14px;
+}
+
+.import-export input[type="file"] {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .import-export #drag-drop-area{
+   background-color: transparent;
+   border: none;
+   margin: 0;
+   padding: 0;
+  }
+  .import-export input[type="file"]{
+    display: block;
+    width: 60px;
+  }
+}
+#importBtn {
+  width: 3vw;
+  height: 3vw;
+  background-color: #00b3b3;
+  color: #333;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#importBtn:disabled {
+  background-color: #00b3b3;
+  cursor: not-allowed;
+}
+
+#importBtn:hover:not(:disabled) {
+  background-color: #009999;
+}
+
+.import-export .export-area button:hover {
+  background-color: #009999;
+}
+#exportBtn {
+  background-color: #00b3b3;
+  width: 3vw;
+  height: 3vw;
+  border: none;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#exportBtn:hover {
+  background-color: #009999;
+}
+
+#exportBtn:active {
+  background-color: #007373;
+}
+@media screen and (max-width: 768px) {
+  #exportBtn{
+    font-size: 20px;
+    font-weight: 700;
+    width: 10vw;
+    height: 10vw;
+  }
+  #importBtn{
+    font-size: 20px;
+    width: 10vw;
+    height: 10vw;
+  }
+  .import-area{
+    gap: 2vh;
+  }
+
+}
+/* Dashboard */
+#dashboard {
+  width: 90%;
+  height: 100%;
+  padding: 20px;
+  background-color: #003333; /* Dark Cyan */
+  overflow: auto;
+}
+.flex-Container {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+
+  background-color: #003333;
+}
+body.dark-mode .flex-Container {
+  background-color: #009999;
+}
+/* header start */
+#header {
+  background-color: #0b5c5c;
+  color: white;
+  padding: 10px;
+  height: 100%;
+  width: 15%;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  justify-content: space-between;
+  transition: 0.5s;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+/* Profil kısmı */
+.profile-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+hr {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+#profile-icon {
+  margin-bottom: 10px;
+  width: 120px;
+  transition: 0.5s;
+}
+#profile-bio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  font-weight: 400;
+  font-size: 20px;
+}
+#profile-image {
+  width: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  margin-top: 5px;
+}
+
+#profile-fullname{
+  font-weight: bold;
+
+}
+
+/* Çıkış butonu */
+.logoutBtnSec {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+#logoutBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  background-color: red;
+  border: none;
+  color: white;
+  font-size: 24px;
+  text-align: center;
+}
+#logoutLbl {
+  font-size: 18px;
+}
+#logoutBtn i {
+  font-size: 18px;
+}
+#logoutBtn:hover {
+  background-color: #d32f2f;
+}
+
+/* OpenClose Arrow */
+#openCloseArrow {
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  background-color: #003333;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 25px;
+  transition: 0.5s;
+}
+
+#openCloseArrow:hover i {
+  transition: 0.5s;
+  color: #00b3b3;
+}
+@media screen and (max-width: 768px) {
+  #openCloseArrow {
+    right: 25px;
+    bottom: -40px;
+    transform: rotate(90deg);
+    padding: 15px;
+    text-align: center;
+  }
+  #filter-day {
+    width: 30vw;
+  }
+}
+/* Profil Sayfası */
+#profile-page {
+  backdrop-filter: blur(10px);
+  background-color: transparent;
+  color: #ecf0f1;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  margin: 0 auto;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  height: 100%;
+}
+
+#profile-page #avatar {
+  display: none;
+}
+#closeWin {
+  background-color: #ff4c4c;
+  font-size: 15px;
+}
+#closeWin:hover {
+  background-color: #e60000;
+}
+/* Harcama Sayfası */
+#expenses-page {
+  padding: 20px;
+}
+#expenseTable thead tr th:first-child {
+  width: 10px;
+}
+.pag-filt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#expense-filters {
+  display: flex;
+  gap: 3px;
+}
+#filter-day {
+  width: 10vw;
+}
+#pagination {
+  display: flex;
+  gap: 5px;
+}
+i {
+  color: white;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #007373;
+}
+
+th {
+  background-color: #004d4d;
+}
+
+td {
+  background-color: #003e3e;
+}
+
+tr:nth-child(even) {
+  background-color: #004d4d;
+}
+@media screen and (max-width: 768px) {
+  table {
+    font-size: 14px;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
+    
+  }
+ 
+  th,
+  td {
+    padding: 8px;
+    transition: 0.5s;
+  }
+  #pagination {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    font-size: 12px;
+  }
+  .pag-filt {
+    align-items: flex-start;
+  }
+
+  #expense-filters {
+    gap: 5px;
+  }
+
+  #expense-filters input {
+    font-size: 14px;
+    width: 20vw;
+  }
+
+  #apply-filters {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+}
+
+
+
+
+#avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+  #header{
+    position: fixed;
+    z-index: 9999;
+  }
+  .flex-Container {
+    flex-direction: column;
+  }
+  #header {
+    flex-direction: row;
+    width: 100%;
+    height: 20vw;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+  }
+  #sideTabs {
+    display: none;
+  }
+  #profile-icon {
+    width: 50px;
+    margin: 0;
+  }
+  .profile-flex {
+    flex-direction: row;
+    gap: 6px;
+    margin: 0;
+  }
+  #logoutBtn {
+    left: 5px;
+    width: 20px;
+    font-size: 10px;
+  }
+  .login-container,
+  #dashboard {
+    padding: 15px;
+    width: 100%;
+  }
+
+  table th,
+  table td {
+    font-size: 14px;
+    padding: 10px;
+  }
+  #fileInput {
+    width: 20vw;
+    font-size: 10px;  
+    padding-right: 8px;
+  }
+}
+/* Dark light */
+#darklightButton {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  z-index: 10000;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+#darklightButton i {
+  font-size: 15px;
+}
+/* Koyu Mod */
+body.dark-mode {
+  background-color: #00b3b3;
+  color: white;
+  transition: 0.5s;
+}
+
+/* Formlar ve inputlar */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode button {
+  background-color: #009999;
+  color: white;
+  border: 1px solid white;
+  transition: 0.5s ease-in-out;
+}
+body.dark-mode #header {
+  background-color: #08b8b880;
+}
+body.dark-mode #openCloseArrow {
+  background-color: #009999;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode select::placeholder,
+body.dark-mode textarea::placeholder {
+  color: white; /* Placeholder rengi beyaz-kahverengi olur */
+  transition: 0.5s ease-in-out;
+}
+/* a tag */
+body.dark-mode a:hover {
+  color: gray;
+}
+/* Başlıklar */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: white;
+  transition: 0.5s ease-in-out;
+}
+
+/* Tablo Başlıkları ve Hücreler */
+body.dark-mode th,
+body.dark-mode td {
+  border: 1px solid white;
+  transition: 0.5s ease-in-out;
+}
+
+body.dark-mode table {
+  background-color: #009999;
+  transition: 0.5s ease-in-out;
+}
+
+/* Profil ve Dashboard Sayfaları */
+body.dark-mode #profile-icon img,
+body.dark-mode #profile-image {
+  border-color: red;
+  transition: 0.5s ease-in-out;
+}
+
+/* Butonlar */
+body.dark-mode button {
+  background-color: white;
+  color: #006666;
+  border: none;
+  cursor: pointer;
+  transition: 0.5s ease-in-out;
+}
+body.dark-mode i {
+  color: #006666;
+}
+body.dark-mode button:hover {
+  background-color: rgba(255, 255, 255, 0.586);
+  transition: 0.5s ease-in-out;
+}
+th:hover,
+td:hover {
+  background-color: #058787;
+  color: white;
+  cursor: pointer;
+}
+
+/* Sayfa başlıkları ve metin */
+body.dark-mode #expenseTable th {
+  background-color: #0e8888;
+  transition: 0.5s ease-in-out;
+}
+body.dark-mode #expense-filters,
+body.dark-mode #expenseTable td,
+body.dark-mode .import-area,
+body.dark-mode .export-area {
+  background-color: #009999;
+  color: inherit;
+  transition: 0.5s ease-in-out;
+}
+body.dark-mode th:hover,
+body.dark-mode td:hover {
+  background-color: gray;
+}
+/* Filtre ve Arama Alanları */
+body.dark-mode input[type="date"],
+body.dark-mode input[type="number"],
+body.dark-mode textarea {
+  background-color: #009999;
+  color: white;
+  transition: 0.5s ease-in-out;
+}
+
+/* Sayfa geçişi ve diğer alanlar */
+body.dark-mode #login-page,
+body.dark-mode #dashboard {
+  background-color: #009999;
+  color: white;
+  transition: 0.5s ease-in-out;
+}
+
+body.dark-mode #darklightButton {
+  background-color: #006666;
+  color: white;
+  transition: 0.5s ease-in-out;
+}
+body.dark-mode #darklightButton i {
+  color: white;
+}
+body.dark-mode #pagination {
+  color: white;
+  transition: 0.5s ease-in-out;
+}
+
+body.dark-mode #expense-filters {
+  color: white;
+  transition: 0.5s ease-in-out;
+}
+
+body.dark-mode #expenseChart {
+  transition: 0.5s ease-in-out;
+}
+</style>
   </head>
   <body>
     <!-- Giriş Səhifəsi -->
